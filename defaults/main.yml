@@ -1,2 +1,29 @@
 ---
 # Role default lower priority variables
+
+## if we want a deny all configuration
+tcpwrappers_deny_all: false
+
+#tcpwrappers_deny:
+#    service:
+#      denied_service_name:
+#      denied_hosts_list:
+#    ftpd:
+#      denied_service_name: "in.ftpd"
+#      denied_hosts_list:
+#        - ALL
+
+tcpwrappers_allow:
+    ALL:
+      allowed_service_name: "ALL"
+      allowed_hosts_list: ["localhost","LOCAL"]
+
+#    xinetd:
+#      allowed_service_name: "xinetd"
+#      allowed_hosts_list:
+#        - ALL
+#        - hosts2
+
+#    sshd:
+#      allowed_service_name: "sshd"
+#      allowed_hosts_list: ["ALL","host1"]
