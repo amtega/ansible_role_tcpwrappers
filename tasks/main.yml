@@ -1,2 +1,59 @@
 ---
 # Role tasks
+- name: install tcp wrapper util
+  package:
+    name: tcp_wrappers
+    state: present
+  when: tcpwrappers_install
+
+- name: set deny all
+  become: true
+  lineinfile:
+    name: /etc/hosts.deny
+    backup: yes
+    insertbefore: BOF
+    state: present
+    line: "ALL:ALL"
+  when: tcpwrappers_deny_all
+
+- name: checking tcpwrappers_allow list is defined
+  block:
+    - debug:
+        msg: "tcpwrappers_allow list is defined"
+      when: tcpwrappers_allow is defined
+    - debug:
+          msg: "tcpwrappers_allow list is undefined"
+      when: tcpwrappers_allow is not defined
+
+- name: configure allowed services
+  become: true
+  lineinfile:
+    name: /etc/hosts.allow
+    backup: yes
+    state: present
+    line: "{{ item.value.allowed_service_name }}: {{ item.value.allowed_hosts_list | join(', ') }}"
+  when: tcpwrappers_allow is defined
+  with_dict: "{{ tcpwrappers_allow }}"
+
+#- debug:
+#    msg: "tcpwrappers_deny is defined"
+#  when: tcpwrappers_deny is defined
+
+- name: checking tcpwrappers_deny list is defined
+  block:
+    - debug:
+        msg: "tcpwrappers_deny list is defined"
+      when: tcpwrappers_deny is defined
+    - debug:
+          msg: "tcpwrappers_deny list is undefined"
+      when: tcpwrappers_deny is not defined
+
+- name: configure denied services
+  become: true
+  lineinfile:
+    name: /etc/hosts.deny
+    backup: yes
+    state: present
+    line: "{{ item.value.denied_service_name }}: {{ item.value.denied_hosts_list | join(', ') }}"
+  when: tcpwrappers_deny is defined
+  with_dict: "{{ tcpwrappers_deny }}"

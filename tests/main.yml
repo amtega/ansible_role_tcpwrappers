@@ -1,2 +1,10 @@
 ---
 # Tasks for testing role
+
+- name: test tcpwrappers role
+  hosts: all
+  roles:
+    - role: amtega.tcpwrappers
+
+- import_playbook: test_tasks.yml
+  tags: idempotence
