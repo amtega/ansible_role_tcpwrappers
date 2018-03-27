@@ -35,8 +35,8 @@
     - name: verify that hosts.allow matches inventory
       assert:
         that:
-          - read_config_file_result.stdout | search ("{{ item.value.allowed_service_name }}")
-          - read_config_file_result.stdout | search ("{{ item.value.allowed_hosts_list }}")
+          - read_config_file_result.stdout is search ("{{ item.value.allowed_service_name }}")
+          - read_config_file_result.stdout is search ("{{ item.value.allowed_hosts_list }}")
       with_dict: "{{ tcpwrappers_allow }}"
 
     - name: read hosts.deny file
@@ -47,8 +47,8 @@
     - name: verify that hosts.deny matches inventory
       assert:
         that:
-          - read_config_file_result.stdout | search ("{{ item.value.denied_service_name }}")
-          - read_config_file_result.stdout | search ("{{ item.value.denied_hosts_list }}")
+          - read_config_file_result.stdout is search ("{{ item.value.denied_service_name }}")
+          - read_config_file_result.stdout is search ("{{ item.value.denied_hosts_list }}")
       with_dict: "{{ tcpwrappers_deny }}"
 
   #tags:
