@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: tcpwrappers
   author: Carlos Chedas Fernandez
   description: Configuration of TCP Wrappers security framework
   company: AMTEGA - Xunta de Galicia
