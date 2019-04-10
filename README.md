@@ -1,11 +1,10 @@
-# role_name
+# Ansible tcpwrappers role
 
-Configuration of TCP Wrappers security framework.
-Configures hosts.allow and hosts.deny file.
+This is an [Ansible](http://www.ansible.com) role which configures TCP Wrappers security framework through `/etc/hosts.allow` and `/etc/hosts.deny` files.
 
 ## Requirements
 
-- Ansile >= 2.4
+[Ansible 2.7+](http://docs.ansible.com/ansible/latest/intro_installation.html)
 
 ## Role Variables
 
