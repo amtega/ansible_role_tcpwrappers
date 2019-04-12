@@ -1,10 +1,94 @@
 ---
 # Tasks for testing role
 
-- name: test tcpwrappers role
-  hosts: all
+- name: Run idempotence test
+  hosts: localhost
   roles:
-    - role: amtega.tcpwrappers
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-7`)
+           || starts_with(name, `centos-6`)
+           || starts_with(name, `fedora-27`)
+           || starts_with(name, `fedora-28`)
+           || starts_with(name, `fedora-29`) ]
 
-- import_playbook: test_tasks.yml
-  tags: idempotence
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: Prepare docker containers for test
+  hosts: docker_sandbox_containers
+  tasks:
+    # FIXME: Cargo cult
+    - name: Setup extra tcpwrappers
+      set_fact:
+        services_extra:
+          tcpwrappers_allow:
+            - daemons:
+                - foo2
+              clients:
+                - localhost
+              state: absent
+          tcpwrappers_deny:
+            - daemons:
+                - foo3
+              clients:
+                - localhost
+              state: absent
+  tags:
+    - idempotence
+
+- name: Test tcpwrappers role
+  hosts: docker_sandbox_containers
+  tasks:
+
+    # - name: Tests setup - add service binary
+    #   pass:
+
+    - name: Add tcpwrappers
+      vars:
+        tcpwrappers_allow:
+          - daemons:
+              - ssh
+              - ftp
+            clients:
+              - localhost
+            state: present
+          - daemons:
+              - ssh
+              - ftp
+            clients:
+              - LOCAL
+            state: present
+        tcpwrappers_deny:
+          - daemons:
+              - ALL
+            clients:
+              - ALL
+            state: present
+      include_role:
+        name: amtega.tcpwrappers
+
+
+    - name: Check wrappers
+      shell: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
+      loop:
+        - file: /etc/hosts.allow
+          line: "ssh,ftp:localhost:"
+        - file: /etc/hosts.allow
+          line: "ssh,ftp:LOCAL:"
+        - file: /etc/hosts.deny
+          line: "ALL:ALL:"
+      register: check_wrappers_result
+  tags:
+    - idempotence
+
+- name: Cleanup docker docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox

@@ -10,6 +10,21 @@ This is an [Ansible](http://www.ansible.com) role which configures TCP Wrappers 
 
 A list of all the default variables for this role is available in `defaults/main.yml`.
 
+
+## Filters
+
+This role don't provide any.
+
+## Modules
+
+This role don't provide any.
+
+## Tests
+
+The role provides these tests:
+
+- `main.yml`: basic functionality test
+
 ## Dependencies
 
 None.
@@ -23,68 +38,54 @@ This is an example playbook:
 
 - hosts: all
   roles:    
-    - role: amtega.xinetd_service
-      # list of services to deny access
-      tcpwrappers_deny:
-        # service_tag:
-        #   denied_service_name: name of the service
-        #   denied_host_list: list of host to deny access
-        ftpd:
-          denied_service_name: "in.ftpd"
-          denied_hosts_list:
-            - ALL
-      # list of services to allow access
-      tcpwrappers_allow:
-        ALL:
-          allowed_service_name: "ALL"
-          allowed_hosts_list: ["localhost","LOCAL"]
+    - role: amtega.tcpwrappers
+      vars:
+        tcpwrappers_allow:
+          - daemons:
+              - ssh
+              - ftp
+            clients:
+              - localhost
+            state: present
+          - daemons:
+              - ssh
+              - ftp
+            clients:
+              - LOCAL
+            state: present
+        tcpwrappers_deny:
+          - daemons:
+              - ALL
+            clients:
+              - ALL
+            state: present
 
-        xinetd:
-          allowed_service_name: "xinetd"
-          allowed_hosts_list:
-            - ALL
-            - hosts2
 ```
+
 ## Testing
 
-Test are based on docker containers. You can run the tests with the following commands:
+<!-- A description of how to run tests of the role if available. For example: -->
+
+Tests are based on docker containers. You can setup docker engine quickly using the playbook `files/setup.yml` available in the role [amtega.docker_engine](https://galaxy.ansible.com/amtega/docker_engine).
+
+Once you have docker, you can run the tests with the following commands:
 
 ```shell
 $ cd amtega.tcpwrappers/tests
-$ ansible-playbook main-docker.yml
+$ ansible-playbook main.yml
 ```
-
-If you have docker engine configured you can avoid running dependant 'docker_engine' role (that usually requries root privileges) with the following commands:
-
-```shell
-$ cd amtega.tcpwrappers/tests
-$ ansible-playbook --skip-tags "role::docker_engine" main-docker.yml
-
-If you dont use docker containers:
-
-```shell
-$ cd amtega.xinetd_service/tests
-$ ansible-playbook -u [ssh_user] -kK main.yml
-
-
 
 ## License
 
-Copyright (C) <YEAR> AMTEGA - Xunta de Galicia
+Copyright (C) 2019 AMTEGA - Xunta de Galicia
 
-This role is free software: you can redistribute it and/or modify
-it under the terms of:
-GNU General Public License version 3, or (at your option) any later version;
-or the European Union Public License, either Version 1.2 or – as soon
-they will be approved by the European Commission ­subsequent versions of
-the EUPL;
+This role is free software: you can redistribute it and/or modify it under the terms of:
 
-This role is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details or European Union Public License for more details.
+GNU General Public License version 3, or (at your option) any later version; or the European Union Public License, either Version 1.2 or – as soon they will be approved by the European Commission ­subsequent versions of the EUPL.
+
+This role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details or European Union Public License for more details.
 
 ## Author Information
 
-- author_name 1.
-- author_name N.
+- Carlos Chedas Fernández
+- Daniel Sánchez Fábregas
