@@ -20,33 +20,27 @@
 - name: Prepare docker containers for test
   hosts: docker_sandbox_containers
   tasks:
-    # FIXME: Cargo cult
     - name: Setup extra tcpwrappers
       set_fact:
-        services_extra:
-          tcpwrappers_allow:
-            - daemons:
-                - foo2
-              clients:
-                - localhost
-              state: absent
-          tcpwrappers_deny:
-            - daemons:
-                - foo3
-              clients:
-                - localhost
-              state: absent
+        tcpwrappers_allow_extra:
+          - daemons:
+              - foo2
+            clients:
+              - localhost
+            state: present
+        tcpwrappers_deny_extra:
+          - daemons:
+              - foo3
+            clients:
+              - localhost
+            state: present
   tags:
     - idempotence
 
 - name: Test tcpwrappers role
   hosts: docker_sandbox_containers
-  tasks:
-
-    # - name: Tests setup - add service binary
-    #   pass:
-
-    - name: Add tcpwrappers
+  roles:
+    - role: amtega.tcpwrappers
       vars:
         tcpwrappers_allow:
           - daemons:
@@ -67,19 +61,21 @@
             clients:
               - ALL
             state: present
-      include_role:
-        name: amtega.tcpwrappers
+  tasks:
 
-
-    - name: Check wrappers
+    - name: Check wrappers config
       shell: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
       loop:
         - file: /etc/hosts.allow
           line: "ssh,ftp:localhost:"
         - file: /etc/hosts.allow
           line: "ssh,ftp:LOCAL:"
+        - file: /etc/hosts.allow
+          line: "foo2:localhost:"
         - file: /etc/hosts.deny
           line: "ALL:ALL:"
+        - file: /etc/hosts.deny
+          line: "foo3:localhost:"          
       register: check_wrappers_result
   tags:
     - idempotence
