@@ -49,22 +49,27 @@
             clients:
               - localhost
             state: present
+
           - daemons:
               - ssh
               - ftp
             clients:
               - LOCAL
             state: present
+
         tcpwrappers_deny:
           - daemons:
               - ALL
             clients:
               - ALL
             state: present
+
+        tcpwrappers_load_from_hostvars: yes
   tasks:
 
     - name: Check wrappers config
       shell: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
+      changed_when: false
       loop:
         - file: /etc/hosts.allow
           line: "ssh,ftp:localhost:"
@@ -75,7 +80,7 @@
         - file: /etc/hosts.deny
           line: "ALL:ALL:"
         - file: /etc/hosts.deny
-          line: "foo3:localhost:"          
+          line: "foo3:localhost:"
       register: check_wrappers_result
   tags:
     - idempotence
