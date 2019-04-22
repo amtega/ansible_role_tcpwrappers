@@ -1,8 +1,0 @@
----
-# Role variables
-
-## to install tcp_wrappers util if not installed
-tcpwrappers_install: true
-
-## if we want a deny all configuration
-tcpwrappers_deny_all: true

@@ -1,24 +1,20 @@
 ---
 galaxy_info:
   role_name: tcpwrappers
-  author: Carlos Chedas Fernandez
+  author: Carlos Chedas Fernández
   description: Configuration of TCP Wrappers security framework
   company: AMTEGA - Xunta de Galicia
 
-  # If the issue tracker for your role is not on github, uncomment the
-  # next line and provide a value
-  # issue_tracker_url: http://example.com/issue/tracker
-
   license: GPLv3 or EUPL
 
-  min_ansible_version: 1.2
+  min_ansible_version: 2.7
 
   platforms:
     - name: Fedora
       versions:
-        - 25
-        - 26
         - 27
+        - 28
+        - 29
 
     - name: EL
       versions:
@@ -29,6 +25,3 @@ galaxy_info:
     - security
 
 dependencies: []
-# List your role dependencies here, one per line.
-# Be sure to remove the '[]' above if you add dependencies
-# to this list.
