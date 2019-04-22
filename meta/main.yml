@@ -2,7 +2,7 @@
 # Role dependencies
 
 galaxy_info:
-  role_name: services
+  role_name: tcpwrappers
   author: Carlos Chedas Fernández / Daniel Sánchez Fábregas / Juan Antonio Valiño García
   description: Configuration of TCP Wrappers security framework
   company: AMTEGA - Xunta de Galicia
