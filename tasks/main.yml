@@ -1,28 +1,54 @@
 ---
 # Role tasks
 
-- name: Configure allowed services
-  when: tcpwrappers_allow is defined
-  lineinfile:
-    name: /etc/hosts.allow
-    backup: yes
-    state: "{{ hosts_entry.state }}"
-    line: "{{ hosts_entry.daemons | join(',') }}:{{
-              hosts_entry.clients | join(',') }}:{{
-              hosts_entry.options | default([]) | join(':') }}"
-  loop: "{{ tcpwrappers_allow }}"
-  loop_control:
-      loop_var: hosts_entry
+- block:
+    - name: Configure allowed services
+      lineinfile:
+        name: /etc/hosts.allow
+        backup: yes
+        state: "{{ hosts_entry.state }}"
+        line: "{{ tcpwrappers_line }}"
+      when: tcpwrappers_allow is defined
+      loop: "{{ tcpwrappers_to_manage }}"
+      loop_control:
+        loop_var: hosts_entry
+        label: "{{ tcpwrappers_line }}"
+      vars:
+        tcpwrappers_to_manage: >-
+          {{ tcpwrappers_allow
+             + ((tcpwrappers_load_from_hostvars)
+                | ternary(tcpwrappers_allow_hostvars
+                          | default([])
+                          | flatten,
+                          [])) }}
+      tags:
+        - role::tcpwrappers::allow
 
-- name: Configure denied services
-  when: tcpwrappers_deny is defined
-  lineinfile:
-    name: /etc/hosts.deny
-    backup: yes
-    state: "{{ hosts_entry.state }}"
-    line: "{{ hosts_entry.daemons | join(',') }}:{{
-              hosts_entry.clients | join(',') }}:{{
-              hosts_entry.options | default([]) | join(':') }}"
-  loop: "{{ tcpwrappers_deny }}"
-  loop_control:
-      loop_var: hosts_entry
+    - name: Configure denied services
+      lineinfile:
+        name: /etc/hosts.deny
+        backup: yes
+        state: "{{ hosts_entry.state }}"
+        line: "{{ tcpwrappers_line }}"
+      when: tcpwrappers_deny is defined
+      loop: "{{ tcpwrappers_to_manage }}"
+      loop_control:
+        loop_var: hosts_entry
+        label: "{{ tcpwrappers_line }}"
+      vars:
+        tcpwrappers_to_manage: >-
+          {{ tcpwrappers_deny
+             + ((tcpwrappers_load_from_hostvars)
+                | ternary(tcpwrappers_deny_hostvars
+                          | default([])
+                          | flatten,
+                          [])) }}
+      tags:
+        - role::tcpwrappers::deny
+  vars:
+    tcpwrappers_line: >-
+      {{ hosts_entry.daemons | join(',') }}:{{
+                hosts_entry.clients | join(',') }}:{{
+                hosts_entry.options | default([]) | join(':') }}
+  tags:
+    - role::tcpwrappers

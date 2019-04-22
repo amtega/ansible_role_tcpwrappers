@@ -10,25 +10,6 @@ This is an [Ansible](http://www.ansible.com) role which configures TCP Wrappers 
 
 A list of all the default variables for this role is available in `defaults/main.yml`.
 
-
-## Filters
-
-This role don't provide any.
-
-## Modules
-
-This role don't provide any.
-
-## Tests
-
-The role provides these tests:
-
-- `main.yml`: basic functionality test
-
-## Dependencies
-
-None.
-
 ## Example Playbook
 
 This is an example playbook:
@@ -47,12 +28,14 @@ This is an example playbook:
             clients:
               - localhost
             state: present
+
           - daemons:
               - ssh
               - ftp
             clients:
               - LOCAL
             state: present
+
         tcpwrappers_deny:
           - daemons:
               - ALL
@@ -63,8 +46,6 @@ This is an example playbook:
 ```
 
 ## Testing
-
-<!-- A description of how to run tests of the role if available. For example: -->
 
 Tests are based on docker containers. You can setup docker engine quickly using the playbook `files/setup.yml` available in the role [amtega.docker_engine](https://galaxy.ansible.com/amtega/docker_engine).
 
@@ -89,3 +70,4 @@ This role is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 
 - Carlos Chedas Fernández
 - Daniel Sánchez Fábregas
+- Juan Antonio Valiño García

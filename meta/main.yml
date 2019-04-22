@@ -1,27 +1,60 @@
 ---
+# Role dependencies
+
 galaxy_info:
-  role_name: tcpwrappers
-  author: Carlos Chedas Fernández
+  role_name: services
+  author: Carlos Chedas Fernández / Daniel Sánchez Fábregas / Juan Antonio Valiño García
   description: Configuration of TCP Wrappers security framework
   company: AMTEGA - Xunta de Galicia
-
   license: GPLv3 or EUPL
-
   min_ansible_version: 2.7
-
   platforms:
+    - name: EL
+      versions:
+        - 6
+        - 7
     - name: Fedora
       versions:
         - 27
         - 28
         - 29
-
-    - name: EL
-      versions:
-        - 6
-        - 7
   galaxy_tags:
     - system
+    - tcpwrappers
     - security
 
-dependencies: []
+dependencies:
+  - role: amtega.check_platform
+    vars:
+      check_platform_distributions:
+        centos: 6
+        fedora: 27
+        rhel: 6
+    tags:
+      - role::tcpwrappers
+
+  - role: amtega.select_hostvars
+    vars:
+      select_hostvars_query:
+        pattern: "^tcpwrappers_allow_.*"
+        attributes:
+          - daemons
+          - clients
+        fact_name: tcpwrappers_allow_hostvars
+        output_type: list
+    when: tcpwrappers_load_from_hostvars
+    tags:
+      - role::tcpwrappers
+
+  - role: amtega.select_hostvars
+    vars:
+      select_hostvars_query:
+        pattern: "^tcpwrappers_deny_.*"
+        attributes:
+          - daemons
+          - clients
+        fact_name: tcpwrappers_deny_hostvars
+        output_type: list
+    when: tcpwrappers_load_from_hostvars
+    tags:
+      - role::tcpwrappers

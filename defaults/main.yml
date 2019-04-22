@@ -1,29 +1,89 @@
 ---
 # Role default lower priority variables
 
-## if we want a deny all configuration
-tcpwrappers_deny_all: false
-
-#tcpwrappers_deny:
-#    service:
-#      denied_service_name:
-#      denied_hosts_list:
-#    ftpd:
-#      denied_service_name: "in.ftpd"
-#      denied_hosts_list:
-#        - ALL
+# List of dicts with the TCP wrappers allowed entries. The dictionaries must
+# have the following structure:
+#
+# {
+#   daemons:                        # List of strings with daemon names allowed
+#     - <daemon1>
+#     - <daemon2>
+#     - <daemonN>
+#   clients:                        # List of strings with clients allowed
+#     - <client1>
+#     - <client2>
+#     - <clientN>
+#   options:
+#     - <option1>                   # List of strings with clients allowed
+#     - <option2>
+#     - <optionN>
+#   state: <state>                  # Can be present or absent
+# }
+#
+# Example:
+#
+# tcpwrappers_allow:
+#   - daemons:
+#       - ssh
+#       - ftp
+#     clients:
+#       - localhost
+#     state: present
+#
+#   - daemons:
+#       - ssh
+#       - ftp
+#     clients:
+#       - LOCAL
+#     state: present
 
 tcpwrappers_allow:
-    ALL:
-      allowed_service_name: "ALL"
-      allowed_hosts_list: ["localhost","LOCAL"]
+  - daemons:
+      - ALL
+    clients:
+      - localhost
+      - LOCAL
+    state: present
 
-#    xinetd:
-#      allowed_service_name: "xinetd"
-#      allowed_hosts_list:
-#        - ALL
-#        - hosts2
+# List of dicts with the TCP wrappers denied entries. The dictionaries must
+# have the following structure:
+#
+# {
+#   daemons:                        # List of strings with daemon names denied
+#     - <daemon1>
+#     - <daemon2>
+#     - <daemonN>
+#   clients:                        # List of strings with clients denied
+#     - <client1>
+#     - <client2>
+#     - <clientN>
+#   options:
+#     - <option1>                   # List of strings with clients denied
+#     - <option2>
+#     - <optionN>
+#   state: <state>                  # Can be present or absent
+# }
+#
+# Example:
+#
+# tcpwrappers_deny:
+#   - daemons:
+#       - ALL
+#     clients:
+#       - ALL
+#     state: present
 
-#    sshd:
-#      allowed_service_name: "sshd"
-#      allowed_hosts_list: ["ALL","host1"]
+tcpwrappers_deny:
+  - daemons:
+      - ALL
+    clients:
+      - ALL
+    state: present
+
+# Indicate `tcpwrappers_allow` and `tcpwrappers_deny` must be loaded also from
+# host variables. Any host variable that begins with "tcpwrappers_allow_*",
+# "tcpwrappers_deny_*" and contains the necessary attributes will be loaded as
+# an item to manage by the role. The variables must follow the structure
+# detailed before for `tcpwrappers_allow` and `tcpwrappers_deny`
+
+tcpwrappers_load_from_hostvars: no
