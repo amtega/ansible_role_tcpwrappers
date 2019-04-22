@@ -7,13 +7,12 @@
         name: /etc/hosts.allow
         backup: yes
         state: "{{ hosts_entry.state }}"
-        line: "{{ hosts_entry.daemons | join(',') }}:{{
-                  hosts_entry.clients | join(',') }}:{{
-                  hosts_entry.options | default([]) | join(':') }}"
+        line: "{{ tcpwrappers_line }}"
       when: tcpwrappers_allow is defined
       loop: "{{ tcpwrappers_to_manage }}"
       loop_control:
-          loop_var: hosts_entry
+        loop_var: hosts_entry
+        label: "{{ tcpwrappers_line }}"
       vars:
         tcpwrappers_to_manage: >-
           {{ tcpwrappers_allow
@@ -30,13 +29,12 @@
         name: /etc/hosts.deny
         backup: yes
         state: "{{ hosts_entry.state }}"
-        line: "{{ hosts_entry.daemons | join(',') }}:{{
-                  hosts_entry.clients | join(',') }}:{{
-                  hosts_entry.options | default([]) | join(':') }}"
+        line: "{{ tcpwrappers_line }}"
       when: tcpwrappers_deny is defined
       loop: "{{ tcpwrappers_to_manage }}"
       loop_control:
-          loop_var: hosts_entry
+        loop_var: hosts_entry
+        label: "{{ tcpwrappers_line }}"
       vars:
         tcpwrappers_to_manage: >-
           {{ tcpwrappers_deny
@@ -47,5 +45,10 @@
                           [])) }}
       tags:
         - role::tcpwrappers::deny
+  vars:
+    tcpwrappers_line: >-
+      {{ hosts_entry.daemons | join(',') }}:{{
+                hosts_entry.clients | join(',') }}:{{
+                hosts_entry.options | default([]) | join(':') }}
   tags:
     - role::tcpwrappers
