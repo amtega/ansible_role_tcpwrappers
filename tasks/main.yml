@@ -47,8 +47,10 @@
         - role::tcpwrappers::deny
   vars:
     tcpwrappers_line: >-
-      {{ hosts_entry.daemons | join(',') }}:{{
-                hosts_entry.clients | join(',') }}:{{
-                hosts_entry.options | default([]) | join(':') }}
+      {{ hosts_entry.daemons | join(',')
+         + ":"
+         + hosts_entry.clients | join(',')
+         + (hosts_entry.options | default([]) | length > 0) | ternary(":", "")
+         + hosts_entry.options | default([]) | join(':') }}
   tags:
     - role::tcpwrappers
