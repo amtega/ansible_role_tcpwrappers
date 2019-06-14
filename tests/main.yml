@@ -5,15 +5,16 @@
   hosts: localhost
   roles:
     - role: amtega.docker_presets
-      docker_presets_images_json_query: >-
-        [? starts_with(name, `centos-7`)
-           || starts_with(name, `centos-6`)
-           || starts_with(name, `fedora-27`)
-           || starts_with(name, `fedora-28`)
-           || starts_with(name, `fedora-29`) ]
+      vars:
+        docker_presets_images_json_query: >-
+          [? starts_with(name, `centos-7`)
+             || starts_with(name, `centos-6`)
+             || starts_with(name, `fedora-29`)
+             || starts_with(name, `fedora-30`) ]
 
     - role: amtega.docker_sandbox
-      docker_sandbox_state: started
+      vars:
+        docker_sandbox_state: started
   tags:
     - sandbox
 
@@ -65,22 +66,22 @@
             state: present
 
         tcpwrappers_load_from_hostvars: yes
-  tasks:
 
+  tasks:
     - name: Check wrappers config
       shell: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
       changed_when: false
       loop:
         - file: /etc/hosts.allow
-          line: "ssh,ftp:localhost:"
+          line: "ssh,ftp:localhost"
         - file: /etc/hosts.allow
-          line: "ssh,ftp:LOCAL:"
+          line: "ssh,ftp:LOCAL"
         - file: /etc/hosts.allow
-          line: "foo2:localhost:"
+          line: "foo2:localhost"
         - file: /etc/hosts.deny
-          line: "ALL:ALL:"
+          line: "ALL:ALL"
         - file: /etc/hosts.deny
-          line: "foo3:localhost:"
+          line: "foo3:localhost"
       register: check_wrappers_result
   tags:
     - idempotence
@@ -89,7 +90,8 @@
   hosts: localhost
   roles:
     - role: amtega.docker_sandbox
-      docker_sandbox_state: absent
+      vars:
+        docker_sandbox_state: absent
   tags:
     - cleanup
     - sandbox
