@@ -8,6 +8,10 @@
         backup: yes
         state: "{{ hosts_entry.state }}"
         line: "{{ tcpwrappers_line }}"
+        create: yes
+        owner: root
+        group: root
+        mode: 644
       when: tcpwrappers_allow is defined
       loop: "{{ tcpwrappers_to_manage }}"
       loop_control:
@@ -30,6 +34,10 @@
         backup: yes
         state: "{{ hosts_entry.state }}"
         line: "{{ tcpwrappers_line }}"
+        create: yes
+        owner: root
+        group: root
+        mode: 644
       when: tcpwrappers_deny is defined
       loop: "{{ tcpwrappers_to_manage }}"
       loop_control:
