@@ -11,7 +11,7 @@
         create: yes
         owner: root
         group: root
-        mode: 644
+        mode: 0644
       when: tcpwrappers_allow is defined
       loop: "{{ tcpwrappers_to_manage }}"
       loop_control:
@@ -37,7 +37,7 @@
         create: yes
         owner: root
         group: root
-        mode: 644
+        mode: 0644
       when: tcpwrappers_deny is defined
       loop: "{{ tcpwrappers_to_manage }}"
       loop_control:
