@@ -7,7 +7,7 @@ galaxy_info:
   description: Configuration of TCP Wrappers security framework
   company: AMTEGA - Xunta de Galicia
   license: GPLv3 or EUPL
-  min_ansible_version: 2.7
+  min_ansible_version: 2.8
   platforms:
     - name: EL
       versions:
@@ -29,8 +29,6 @@ dependencies:
         centos: 6
         fedora: 29
         rhel: 6
-    tags:
-      - role::tcpwrappers
 
   - role: amtega.select_hostvars
     vars:
@@ -42,8 +40,6 @@ dependencies:
         fact_name: tcpwrappers_allow_hostvars
         output_type: list
     when: tcpwrappers_load_from_hostvars | bool
-    tags:
-      - role::tcpwrappers
 
   - role: amtega.select_hostvars
     vars:
@@ -55,5 +51,3 @@ dependencies:
         fact_name: tcpwrappers_deny_hostvars
         output_type: list
     when: tcpwrappers_load_from_hostvars | bool
-    tags:
-      - role::tcpwrappers

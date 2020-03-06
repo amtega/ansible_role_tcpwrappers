@@ -1,0 +1,16 @@
+{% set ns = namespace(found=false) %}
+{% for hosts_entry in tcpwrappers_to_manage %}
+{% if hosts_entry.daemons | default([]) | length > 0
+      and hosts_entry.clients | default([]) | length > 0 %}
+{% set options_string = (hosts_entry.options | default([]) | length > 0)
+                        | ternary(":" + hosts_entry.options | default([]) | join(':'),
+                                  "") %}
+{% set ns.found = true %}
+- state: {{ hosts_entry.state | default("present") }}
+  content: {{ hosts_entry.daemons | join(',') }}:{{ hosts_entry.clients | join(',') }}{{ options_string }}
+{% endif %}
+{% endfor %}
+
+{% if not ns.found %}
+[]
+{% endif %}
