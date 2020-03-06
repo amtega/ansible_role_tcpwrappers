@@ -6,17 +6,17 @@
       lineinfile:
         name: /etc/hosts.allow
         backup: yes
-        state: "{{ hosts_entry.state }}"
-        line: "{{ tcpwrappers_line }}"
+        state: "{{ tcpwrappers_line.state }}"
+        line: "{{ tcpwrappers_line.content }}"
         create: yes
         owner: root
         group: root
         mode: 0644
       when: tcpwrappers_allow is defined
-      loop: "{{ tcpwrappers_to_manage }}"
+      loop: "{{ lookup('template', 'lines.yml.j2') | from_yaml }}"
       loop_control:
-        loop_var: hosts_entry
-        label: "{{ tcpwrappers_line }}"
+        loop_var: tcpwrappers_line
+        label: "{{ tcpwrappers_line.content }}"
       vars:
         tcpwrappers_to_manage: >-
           {{ tcpwrappers_allow
@@ -32,17 +32,17 @@
       lineinfile:
         name: /etc/hosts.deny
         backup: yes
-        state: "{{ hosts_entry.state }}"
+        state: "{{ tcpwrappers_line.state }}"
         line: "{{ tcpwrappers_line }}"
         create: yes
         owner: root
         group: root
         mode: 0644
-      when: tcpwrappers_deny is defined
-      loop: "{{ tcpwrappers_to_manage }}"
+      when: tcpwrappers_allow is defined
+      loop: "{{ lookup('template', 'lines.yml.j2') | from_yaml }}"
       loop_control:
-        loop_var: hosts_entry
-        label: "{{ tcpwrappers_line }}"
+        loop_var: tcpwrappers_line
+        label: "{{ tcpwrappers_line.content }}"
       vars:
         tcpwrappers_to_manage: >-
           {{ tcpwrappers_deny
@@ -53,12 +53,5 @@
                           [])) }}
       tags:
         - role::tcpwrappers::deny
-  vars:
-    tcpwrappers_line: >-
-      {{ hosts_entry.daemons | join(',')
-         + ":"
-         + hosts_entry.clients | join(',')
-         + (hosts_entry.options | default([]) | length > 0) | ternary(":", "")
-         + hosts_entry.options | default([]) | join(':') }}
   tags:
     - role::tcpwrappers
