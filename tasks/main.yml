@@ -33,7 +33,7 @@
         name: /etc/hosts.deny
         backup: yes
         state: "{{ tcpwrappers_line.state }}"
-        line: "{{ tcpwrappers_line }}"
+        line: "{{ tcpwrappers_line.content }}"
         create: yes
         owner: root
         group: root
