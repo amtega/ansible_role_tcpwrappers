@@ -1,0 +1,23 @@
+---
+
+- name: Converge
+  hosts: molecule_hosts
+  gather_facts: no
+  roles:
+    - amtega.tcpwrappers
+  tasks:
+    - name: Check wrappers config
+      command: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
+      changed_when: false
+      loop:
+        - file: /etc/hosts.allow
+          line: "ssh,ftp:localhost"
+        - file: /etc/hosts.allow
+          line: "ssh,ftp:LOCAL"
+        - file: /etc/hosts.allow
+          line: "foo2:localhost"
+        - file: /etc/hosts.deny
+          line: "ALL:ALL"
+        - file: /etc/hosts.deny
+          line: "foo3:localhost"
+      register: check_wrappers_result
