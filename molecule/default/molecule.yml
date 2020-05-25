@@ -1,0 +1,77 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: centos6
+    image: centos:6
+    groups:
+      - molecule_hosts
+  - name: centos7
+    image: centos:7
+    groups:
+      - molecule_hosts
+  - name: fedora29
+    image: fedora:29
+    groups:
+      - molecule_hosts
+      - molecule_hosts_fedora
+  - name: fedora30
+    image: fedora:30
+    groups:
+      - molecule_hosts
+      - molecule_hosts_fedora
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      molecule_hosts:
+        tcpwrappers_allow:
+          - daemons:
+              - ssh
+              - ftp
+            clients:
+              - localhost
+            state: present
+
+          - daemons:
+              - ssh
+              - ftp
+            clients:
+              - LOCAL
+            state: present
+
+        tcpwrappers_deny:
+          - daemons:
+              - ALL
+            clients:
+              - ALL
+            state: present
+
+        tcpwrappers_load_from_hostvars: yes
+
+        tcpwrappers_allow_extra:
+          - daemons:
+              - foo2
+            clients:
+              - localhost
+            state: present
+        tcpwrappers_deny_extra:
+          - daemons:
+              - foo3
+            clients:
+              - localhost
+            state: present
+
+      molecule_hosts_fedora:
+        ansible_python_interpreter: /usr/bin/python3
+  lint:
+    name: ansible-lint
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
