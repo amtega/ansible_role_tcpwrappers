@@ -1,10 +1,8 @@
 ---
 
-- name: Converge
+- name: Verify
   hosts: molecule_hosts
   gather_facts: no
-  roles:
-    - amtega.tcpwrappers
   tasks:
     - name: Check wrappers config
       command: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
