@@ -6,7 +6,7 @@
   tasks:
     - name: Check wrappers config
       command: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
-      changed_when: false
+      changed_when: yes
       loop:
         - file: /etc/hosts.allow
           line: "ssh,ftp:localhost"
