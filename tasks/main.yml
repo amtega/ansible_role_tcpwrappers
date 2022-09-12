@@ -1,9 +1,9 @@
 ---
-# Role tasks
 
-- block:
+- name: Setup tcpwrappers
+  block:
     - name: Configure allowed services
-      lineinfile:
+      ansible.builtin.lineinfile:
         name: /etc/hosts.allow
         backup: yes
         state: "{{ tcpwrappers_line.state }}"
@@ -29,7 +29,7 @@
         - role::tcpwrappers::allow
 
     - name: Configure denied services
-      lineinfile:
+      ansible.builtin.lineinfile:
         name: /etc/hosts.deny
         backup: yes
         state: "{{ tcpwrappers_line.state }}"

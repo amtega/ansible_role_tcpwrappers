@@ -5,7 +5,8 @@
   gather_facts: no
   tasks:
     - name: Check wrappers config
-      command: grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
+      ansible.builtin.command: >-
+        grep --fixed-strings "{{ item.line }}" "{{ item.file }}"
       changed_when: yes
       loop:
         - file: /etc/hosts.allow
